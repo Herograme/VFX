@@ -2,8 +2,8 @@ local ContextActionService = game:GetService("ContextActionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
-local Player = Players.LocalPlayer
-local Remote = ReplicatedStorage.PowerSystem.Remotes
+local player = Players.LocalPlayer
+local remote = ReplicatedStorage.PowerSystem.Remotes
 local Mouse = player:GetMouse()
 
 local Debounce = {}
@@ -26,7 +26,7 @@ function FireSkill(SkillType, InputState)
        -- origin vai para o servidor para evitar burlas
 
         local Direction = Mouse.Hit.Position
-
+        print(SkillType)
         Debounce[SkillType] = true
         remote.SummonPower:FireServer(SkillType, Direction)
 

@@ -7,8 +7,8 @@ local MovimentTypes = require(PowerSystem.MovimentTypes)
 local Debounce = {}
 
 local function GetSkillName(Player, SkillType)
-    
-    return player:GetAttribute(SkillType)
+    print(Player:GetAttributes(),SkillType, Player:GetAttribute(SkillType))
+    return Player:GetAttribute(SkillType)
 
 end
 

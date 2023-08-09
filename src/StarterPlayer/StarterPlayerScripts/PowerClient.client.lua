@@ -9,7 +9,7 @@ local Player = Players.LocalPlayer
 
 function SpawnPower(SkillName, Origin, Direction)
 
-   local SkillFunction = PowerData.PowerMoviment[SkillName]
+   local SkillFunction = PowerData[SkillName]
 
    if not SkillFunction then return end
 
@@ -34,3 +34,11 @@ function LoadSkill(SkillName, Origin, Direction)
 end
 
 Remotes.SummonPower.OnClientEvent:Connect(LoadSkill)
+
+
+--[[local constructor = PowerData.new()
+print(constructor:GetSkillName())
+constructor:Create("TESTE")
+print(constructor:GetSkillName())
+print(PowerData)
+local constructor2 = PowerData.new()]]

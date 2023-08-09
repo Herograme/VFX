@@ -23,8 +23,20 @@ local PowerMoviment = {
 		
 	end
 
-
+	
 
 }
+--[[PowerMoviment.__index = {}
+ function PowerMoviment.new()
+	local self = setmetatable(PowerMoviment,{})
+	return self
+ end
 
+ function PowerMoviment:Create(SkillName)
+	self.SkillName = SkillName
+
+ end	
+ function PowerMoviment:GetSkillName()
+	return self.SkillName
+ end]]
 return PowerMoviment
