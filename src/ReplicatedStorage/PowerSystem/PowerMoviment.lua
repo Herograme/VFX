@@ -6,15 +6,17 @@ local PowerModels = PowerSystem.Powers
 local MovimentType = require(PowerSystem.MovimentTypes)
 
 local PowerMoviment = {
-	["Blue"] = function(Origin, Direction)
+	["Blue"] = function(Hitbox)
 
 		local BlueSummon = PowerModels.BlueLapse:Clone()
+		local WeldConstraint = Instance.new("WeldConstraint", Hitbox) -- takeshi continua chato ate com virgula
+		
+		BlueSummon:PivotTo(Hitbox.CFrame)
+		WeldConstraint.Part0 = Hitbox
+		WeldConstraint.Part1 = BlueSummon
 
 		Debris:AddItem(BlueSummon, 6)
-			
-		MovimentType.linear(BlueSummon, Origin, Direction, 50)
 		
-		BlueSummon:PivotTo(Origin)
 		BlueSummon.Parent = workspace.PowerSpawned
 
 	end,

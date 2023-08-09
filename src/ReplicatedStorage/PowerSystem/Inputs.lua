@@ -7,6 +7,9 @@ local remote = ReplicatedStorage.PowerSystem.Remotes
 local Mouse = player:GetMouse()
 
 local Debounce = {}
+local Animations = {
+    Blue = "rbxassetid://14377106664"
+} 
 
 function CheckInputBegin(InputState)
     
@@ -19,16 +22,28 @@ end
 function FireSkill(SkillType, InputState)
    
     local InputBegin = CheckInputBegin(InputState)
-
-    if not Debounce[SkillType] and InputBegin then
+    local SkillName = player:GetAttribute(SkillType)
+    if not Debounce[SkillType] and InputBegin and SkillName then
 
        -- local Origin = player.Character.RightHand.RightGripAttachment.WorldCFrame
        -- origin vai para o servidor para evitar burlas
 
         local Direction = Mouse.Hit.Position
-        print(SkillType)
+        local Animator = player.Character.Humanoid.Animator
+        local Animation = Instance.new("Animation")
+        Animation.AnimationId = Animations[SkillName] or "rbxassetid://1"
+        local AnimationTrack = Animator:LoadAnimation(Animation)
+        AnimationTrack:Play()
+
+        --print(SkillType)
         Debounce[SkillType] = true
-        remote.SummonPower:FireServer(SkillType, Direction)
+       
+        AnimationTrack:GetMarkerReachedSignal("SummonPower"):Connect(function(Arguments)
+            if Arguments == "Laucher" then
+                remote.SummonPower:FireServer(SkillType, Direction)
+            end
+        end)
+        
 
         task.wait(3)
         Debounce[SkillType] = nil

@@ -1,23 +1,24 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
+
 local PowerSystem = ReplicatedStorage:WaitForChild("PowerSystem")
 local PowerData = require(PowerSystem.PowerMoviment)
 local Inputs = require(PowerSystem.Inputs)
 local Remotes =  PowerSystem.Remotes
 local Player = Players.LocalPlayer
 
-function SpawnPower(SkillName, Origin, Direction)
+function SpawnPower(SkillName, Hitbox)
 
    local SkillFunction = PowerData[SkillName]
 
    if not SkillFunction then return end
 
-   SkillFunction(Origin, Direction)
+   SkillFunction(Hitbox)
 
 end
 
-function LoadSkill(SkillName, Origin, Direction)
+function LoadSkill(SkillName, Hitbox)
 
    local Character = Player.Character
    local HumanoidRootPart = Character and Character:FindFirstChild("HumanoidRootPart")
@@ -25,10 +26,10 @@ function LoadSkill(SkillName, Origin, Direction)
    if not HumanoidRootPart then return end
   
    local RootPartPosition =  HumanoidRootPart.Position
-   local Magnitude = (Origin.Position - RootPartPosition).Magnitude
+   local Magnitude = (Hitbox.Position - RootPartPosition).Magnitude
 
     if Magnitude < 400 then
-       SpawnPower(SkillName, Origin, Direction)
+       SpawnPower(SkillName, Hitbox)
     end
 
 end
