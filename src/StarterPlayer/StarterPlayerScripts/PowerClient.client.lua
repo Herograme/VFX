@@ -1,46 +1,36 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local remotes =  ReplicatedStorage.PowerSystem.Remotes
+local Players = game:GetService("Players")
+
+local PowerSystem = ReplicatedStorage:WaitForChild("PowerSystem")
+local PowerData = require(PowerSystem.PowerMoviment)
+local Inputs = require(PowerSystem.Inputs)
+local Remotes =  PowerSystem.Remotes
 local Player = Players.LocalPlayer
-local PowerData = require(ReplicatedStorage.PowerSystem.PowerMoviment)
-local Inputs = require(ReplicatedStorage.PowerSystem.Inputs)
 
+function SpawnPower(SkillName, Origin, Direction)
 
+   local SkillFunction = PowerData.PowerMoviment[SkillName]
 
+   if not SkillFunction then return end
 
-local function SpawnPower(SkillName,Origin,Direction)
-
-   if not SkillName then 
-      return
-   end
-
-   PowerData.PowerMoviment[SkillName](Player,Origin,Direction)
+   SkillFunction(Origin, Direction)
 
 end
 
+function LoadSkill(SkillName, Origin, Direction)
 
+   local Character = Player.Character
+   local HumanoidRootPart = Character and Character:FindFirstChild("HumanoidRootPart")
 
+   if not HumanoidRootPart then return end
+  
+   local RootPartPosition =  HumanoidRootPart.Position
+   local Magnitude = (Origin.Position - RootPartPosition).Magnitude
 
-remotes.SummonPower.OnClientEvent:Connect(function(SkillName,Origin,Direction)
-    local PlayerRootPart = Player.Character:FindFirstChild("HumanoidRootPart")
-
-    print(PlayerRootPart)
-    
-    if not PlayerRootPart then
-      return
+    if Magnitude < 400 then
+       SpawnPower(SkillName, Origin, Direction)
     end
-   
-    print("Eu tenho a força")
-    local PlayerPosition =  PlayerRootPart.Position
-    local magntude = (Origin.Position - PlayerPosition).Magnitude
-    local Studs  = math.floor(magntude)
-     if Studs <= 400 then
-        SpawnPower(SkillName,Origin,Direction)
-     end
 
+end
 
-
-end)
-
-
-
+Remotes.SummonPower.OnClientEvent:Connect(LoadSkill)

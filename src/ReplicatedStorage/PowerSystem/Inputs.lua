@@ -1,83 +1,46 @@
-local InputService = game:GetService("ContextActionService")
-local Players = game:GetService("Players")
+local ContextActionService = game:GetService("ContextActionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 
-local player = Players.LocalPlayer
-local remote = ReplicatedStorage.PowerSystem.Remotes
+local Player = Players.LocalPlayer
+local Remote = ReplicatedStorage.PowerSystem.Remotes
 local Mouse = player:GetMouse()
 
+local Debounce = {}
 
-local debouce = {}
-local function CheckButtonState(InputState)
+function CheckInputBegin(InputState)
     
     if InputState == Enum.UserInputState.Begin then
         return true
     end
+
 end
 
-local function PowerCheck(Skill,InputState)
+function FireSkill(SkillType, InputState)
    
-    if not Skill then
-        return warn("Locked Skill")
+    local InputBegin = CheckInputBegin(InputState)
+
+    if not Debounce[SkillType] and InputBegin then
+
+       -- local Origin = player.Character.RightHand.RightGripAttachment.WorldCFrame
+       -- origin vai para o servidor para evitar burlas
+
+        local Direction = Mouse.Hit.Position
+
+        Debounce[SkillType] = true
+        remote.SummonPower:FireServer(SkillType, Direction)
+
+        task.wait(3)
+        Debounce[SkillType] = nil
+
     end
-
-    local CheckInputState = CheckButtonState(InputState)
-        if not debouce[Skill] and CheckInputState == true then
-            local Origin = player.Character.RightHand.RightGripAttachment.WorldCFrame
-            local Direction = Mouse.Hit.Position
-
-
-            debouce[Skill] = true
-            remote.SummonPower:FireServer(Skill,Origin,Direction)
-            task.wait(3)
-            debouce[Skill] = nil
-        end
         
 end
 
-
-
-
-
-local Inputs = {
-	
-    ["E"]= function(ActionName,InputState,InputObject)
-        
-        local Skill = player:GetAttribute("Skill_E")
-      
-        PowerCheck(Skill,InputState)   
-
-    end,
-	["Q"]= function(ActionName,InputState,InputObject)
-        local Skill = player:GetAttribute("Skill_Q")
-      
-        PowerCheck(Skill,InputState)         
-    end,
-	["R"]= function(ActionName,InputState,InputObject)
-        local Skill = player:GetAttribute("Skill_R")
-      
-        PowerCheck(Skill,InputState)        
-    end,
-	["F"]= function(ActionName,InputState,InputObject)
-       
-        PowerCheck("Block",InputState)        
-    end,
-	
-	
-}
-
-
-
-
-
-
-
-
-InputService:BindAction("Skill_E",Inputs.E,false,Enum.KeyCode.E)
---InputService:SetTitle("TESTE","Só clica")
-InputService:BindAction("Skill_Q",Inputs.Q,false,Enum.KeyCode.Q)
-InputService:BindAction("Skill_R",Inputs.R,false,Enum.KeyCode.R)
-InputService:BindAction("Skill_F",Inputs.F,false,Enum.KeyCode.F)
+ContextActionService:BindAction("Skill_E", FireSkill, false, Enum.KeyCode.E)
+ContextActionService:BindAction("Skill_Q", FireSkill, false, Enum.KeyCode.Q)
+ContextActionService:BindAction("Skill_R", FireSkill, false, Enum.KeyCode.R)
+ContextActionService:BindAction("Block", FireSkill, false, Enum.KeyCode.F)
 
 
 

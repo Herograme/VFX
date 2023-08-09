@@ -1,16 +1,22 @@
 local MovimentType = {
     
- linear = function(Item ,Origin,Direction, Velocity )
-        print("Movimento")
-		local Attach = Instance.new("Attachment", Item)
-		local LinearVelocity = Instance.new("LinearVelocity", Item)
+	linear = function(Object, Origin, Direction, Velocity)
+
+		local Attach = Instance.new("Attachment", Object)
+		local LinearVelocity = Instance.new("LinearVelocity", Object)
+	
 		LinearVelocity.MaxForce = math.huge
 		LinearVelocity.VectorVelocity = CFrame.lookAt(Origin.Position, Direction).LookVector * Velocity		
 		LinearVelocity.Attachment0 =  Attach		
- end,
- Arc = function()
-    
- end
+	
+	 end,
+	
+	 Arc = function(Object, Origin, Direction, Velocity)
+		
+	
+	
+	 end
+	
 }
    
 

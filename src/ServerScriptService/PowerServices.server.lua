@@ -1,65 +1,67 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Workspace = game:GetService("Workspace")
 
-local remote = ReplicatedStorage.PowerSystem.Remotes
-local MovimentTypes = require(ReplicatedStorage.PowerSystem.MovimentTypes)
+local PowerSystem = ReplicatedStorage:WaitForChild("PowerSystem")
+local Remotes = PowerSystem.Remotes
+local MovimentTypes = require(PowerSystem.MovimentTypes)
 
-local debouce = {}
+local Debounce = {}
 
-
-local function  CheckPlayerPower(player,SkillName)
+local function GetSkillName(Player, SkillType)
     
-   --[[ local skill_E = player:GetAttribute("Skill_E")
-    local skill_Q = player:GetAttribute("Skill_Q")
-    local skill_R = player:GetAttribute("Skill_R")
-    
-    if SkillName ==  skill_R or SkillName == skill_E or SkillName == skill_Q then
-        return true
-    end]]
-    local skills = player:GetAttributes()
-    print(skills,SkillName)
-    return table.find(skills,SkillName)
+    return player:GetAttribute(SkillType)
 
 end
 
-local function HitBOX(player,SkillName,Origin,Direction)
-    local hitbox = Instance.new("Part")
-    hitbox.Shape = Enum.PartType.Ball
-    hitbox.Size = Vector3.new(8,8,8)
-    hitbox.Transparency = 0.4
-    hitbox.Color=Color3.fromRGB(255,0,0)
-    MovimentTypes.linear(hitbox,Origin,Direction,50)
-    hitbox.Parent = Workspace.PowerSpawned
-    hitbox.Name = "HitBox_"..SkillName.."_"..player.Name
+function CreateHitbox(Player, SkillName, Origin, Direction) 
+    
+    -- O erro aqui era voce não estar enviando o player, logo Direction era nil
+
+    local Hitbox = Instance.new("Part")
+
+    Hitbox.Shape = Enum.PartType.Ball
+    Hitbox.Size = Vector3.new(8,8,8)
+    Hitbox.Transparency = 0.4
+    Hitbox.Color=Color3.fromRGB(255,0,0)
+    Hitbox.Parent = workspace.PowerSpawned
+    Hitbox.Name = "HitBox_"..SkillName.."_"..Player.UserId
+
+    MovimentTypes.linear(Hitbox, Origin, Direction, 50)
 
 end
 
-local function SpawnSkill(player,SkillName,Origin,Direction)
-    local Position = player.Character
-    remote.SummonPower:FireAllClients(SkillName,Origin,Direction)
-    HitBOX(SkillName,Origin,Direction)
-    
+function FireSkill(Player, SkillName, Direction)
 
-    
+    local Character = Player.Character
+    local RightHand = Character and Character:FindFirstChild("RightHand")
+    local Origin = RightHand and RightHand.RightGripAttachment.WorldCFrame -- Pega a origem
+
+    if not Origin then return end -- Caso não tenha Character ou RightHand, não havera Origin, logo, serve para não dar erro
+
+    Remotes.SummonPower:FireAllClients(SkillName, Origin, Direction)
+
+    CreateHitbox(Player, SkillName, Origin, Direction)
+
 end
 
+function ServerReceive(Player, SkillType, Direction)
 
+    local SkillName =  GetSkillName(Player, SkillType)
+    local UserId = Player.UserId
 
-
-remote.SummonPower.OnServerEvent:connect(function(player,SkillName,Origin,Direction)
-    local Checked =  CheckPlayerPower(player,SkillName)
-    print(Checked)
-    if not SkillName or not Origin or not Direction then
+    if not SkillName or not Direction then
         return warn("Invalid Arguments")
     end
 
-    if not debouce[player]  then
-        debouce[player] = true 
-        SpawnSkill(player,SkillName,Origin,Direction)
-        task.wait(3)
-        debouce[player] = nil
-    end
-    
-    
-end)
+    if not Debounce[SkillName..UserId] then -- Debounce por skill
 
+        Debounce[SkillName..UserId] = true 
+        FireSkill(Player, SkillName, Direction)
+
+        task.wait(3)
+        Debounce[SkillName..UserId] = nil
+
+    end
+
+end
+
+Remotes.SummonPower.OnServerEvent:Connect(ServerReceive)
