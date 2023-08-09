@@ -7,40 +7,60 @@ local remote = ReplicatedStorage.PowerSystem.Remotes
 local Mouse = player:GetMouse()
 
 
+local debouce = {}
+local function CheckButtonState(InputState)
+    
+    if InputState == Enum.UserInputState.Begin then
+        return true
+    end
+end
 
-local function PowerCheck(Skill)
-    local debouce = false
-        if Skill ~= nil and debouce == false then
-            local Origin = player.Character.RightHand.RightGripAttachment.WorldCframe
+local function PowerCheck(Skill,InputState)
+   
+    if not Skill then
+        return warn("Locked Skill")
+    end
+
+    local CheckInputState = CheckButtonState(InputState)
+        if not debouce[Skill] and CheckInputState == true then
+            local Origin = player.Character.RightHand.RightGripAttachment.WorldCFrame
             local Direction = Mouse.Hit.Position
 
 
-            debouce = true
+            debouce[Skill] = true
             remote.SummonPower:FireServer(Skill,Origin,Direction)
+            task.wait(3)
+            debouce[Skill] = nil
         end
-        task.wait(3)
-        debouce = false
+        
 end
+
+
+
 
 
 local Inputs = {
 	
-    ["E"]= function()
+    ["E"]= function(ActionName,InputState,InputObject)
         
         local Skill = player:GetAttribute("Skill_E")
-        PowerCheck(Skill)
+      
+        PowerCheck(Skill,InputState)   
+
     end,
-	["Q"]= function()
+	["Q"]= function(ActionName,InputState,InputObject)
         local Skill = player:GetAttribute("Skill_Q")
-        PowerCheck(Skill)        
+      
+        PowerCheck(Skill,InputState)         
     end,
-	["R"]= function()
+	["R"]= function(ActionName,InputState,InputObject)
         local Skill = player:GetAttribute("Skill_R")
-        PowerCheck(Skill)        
+      
+        PowerCheck(Skill,InputState)        
     end,
-	["F"]= function()
-        
-        PowerCheck("Block")        
+	["F"]= function(ActionName,InputState,InputObject)
+       
+        PowerCheck("Block",InputState)        
     end,
 	
 	
