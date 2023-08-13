@@ -1,9 +1,13 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Debris = game:GetService("Debris")
+local ServerStorage = game:GetService("ServerStorage")
+--local Debris = game:GetService("Debris")
+
 
 local PowerSystem = ReplicatedStorage:WaitForChild("PowerSystem")
 local Remotes = PowerSystem.Remotes
-local MovimentTypes = require(PowerSystem.MovimentTypes)
+
+local HitboxModule = require(ServerStorage.HitBoxData)
+
 
 local Debounce = {}
 
@@ -14,22 +18,15 @@ local function GetSkillName(Player, SkillType)
 end
 
 function CreateHitbox(Player, SkillName, Origin, Direction) 
-    
+    local HitBoxFunction = HitboxModule[SkillName]
+
+    if not HitBoxFunction then return end
+
+    local Hitbox = HitBoxFunction(Player,SkillName,Origin,Direction)
+
     -- O erro aqui era voce não estar enviando o player, logo Direction era nil(o takeshi é meio chato com formatação)
 
-    local Hitbox = Instance.new("Part")
-
-    Hitbox.Shape = Enum.PartType.Ball
-    Hitbox.Size = Vector3.new(8,8,8)
-    Hitbox.Transparency = 0.4
-    Hitbox.Color=Color3.fromRGB(255,0,0)
-    Hitbox:PivotTo(Origin)
-    Debris:AddItem(Hitbox, 6)
-    Hitbox.Parent = workspace.PowerSpawned
-    Hitbox.Name = "HitBox_"..SkillName.."_"..Player.UserId
-    Hitbox.CanCollide =  false
-   
-    MovimentTypes.linear(Hitbox, Origin, Direction, 50)
+    
    
     return Hitbox
 
