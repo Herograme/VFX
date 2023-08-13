@@ -44,19 +44,23 @@ local ServerStorage = game:GetService("ServerStorage")
 
 
         Hitbox.CanCollide =  false
-        task.wait(1)
-        Hitbox.CanCollide =  true
+
+        task.delay(0.2,function()
+            Hitbox.CanCollide =  true
+        end)
+        
         
 
-        local PowerEffectFunction = PowerEffect[SkillName]
-        
-        PowerEffectFunction(Hitbox2)
+        local PowerEffectFunction = PowerEffect["Blue"]
+        print(PowerEffectFunction)
+        if not PowerEffectFunction or not Hitbox2 or not Hitbox then return end
+        print("a")
+         PowerEffectFunction(Hitbox2,Player)
+        print("b")
 
-        if not Hitbox then return end
-        if not Hitbox2 then return end
-   
-        MovimentTypes.linear(Hitbox, Origin, Direction, 50)
+        MovimentTypes.linear(Hitbox, Origin, Direction, 30)
 
+        print("c")
         return Hitbox
     end,
     

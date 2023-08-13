@@ -1,0 +1,7 @@
+{
+	"Visible": true,
+	"Transparency": 0,
+	"Color3": [0.05098039656877518, 0.4117647409439087, 0.6745098233222961],
+	"Class": "SurfaceSelection",
+	"TargetSurface": "Enum.NormalId.Back"
+}

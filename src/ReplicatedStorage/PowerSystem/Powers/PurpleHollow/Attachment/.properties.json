@@ -1,0 +1,9 @@
+{
+	"WorldSecondaryAxis": [0, 1, 0],
+	"SecondaryAxis": [0, 1, 0],
+	"WorldAxis": [1, 0, 0],
+	"WorldCFrame": [-8.599990844726562, 44.97720718383789, 876.25, 1, 0, 0, 0, 1, 0, 0, 0, 1],
+	"Class": "Attachment",
+	"CFrame": [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
+	"Axis": [1, 0, 0]
+}
