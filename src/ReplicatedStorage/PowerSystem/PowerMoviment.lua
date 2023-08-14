@@ -35,8 +35,20 @@ local PowerMoviment = {
 		RedSummon.Parent = workspace.PowerSpawned
 
 
-	end
+	end,
+	["Purple"] = function(Hitbox)
+		local PurpleSummon = PowerModels.RedReversive:Clone()
+		local WeldConstraint = Instance.new("WeldConstraint", Hitbox) -- takeshi continua chato ate com virgula
+		
+		PurpleSummon:PivotTo(Hitbox.CFrame)
+		WeldConstraint.Part0 = Hitbox
+		WeldConstraint.Part1 = PurpleSummon
 
+		Debris:AddItem(PurpleSummon, 6)
+		
+		PurpleSummon.Parent = workspace.PowerSpawned
+	
+	end
 	
 
 }
