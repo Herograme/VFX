@@ -15,7 +15,8 @@ local MovimentType = {
 		
 	
 	
-	 end
+	 end,
+	 
 	
 }
    
